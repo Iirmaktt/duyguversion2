@@ -1,5 +1,4 @@
 import express from 'express';
-import { appRouter } from '@/components/appRouter';
 import { errorMiddleware } from '@/middlewares/errorMiddleware';
 import { loggerMiddleware } from '@/middlewares/logger';
 import { connectMongoose } from '@/lib/mongoose';

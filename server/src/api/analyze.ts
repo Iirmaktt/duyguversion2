@@ -2,6 +2,7 @@
 // ✅ ENV VARS
 import pool from '@/db/mysql';
 import axios from 'axios';
+import { knex } from '@/db/knex';
 
 const HF_TOKEN = 'AIzaSyDP22fXxp-fG9pGiMEIenBIKo4PaFKLx_M';
 const MODEL_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
@@ -13,7 +14,6 @@ export const analyze = async (req:any, res:any) => {
       return res.status(400).json({ error: "Mesaj eksik." });
     }
   
-    let conn;
   
     try {
       // 1. Gemini API'ye gönder
@@ -42,20 +42,21 @@ export const analyze = async (req:any, res:any) => {
       const fullResponse = JSON.stringify(response.data); // 🔧 Değiştirildi
   
       // 2. Veritabanına kaydet
-      conn = await pool.getConnection();
+      // conn = await pool.getConnection();
   
-      const msgResult = await conn.query(
-        "INSERT INTO messages (user_id, message, sentiment) VALUES (?, ?, ?)",
-        [user_id || null, message, sentiment]
-      );
-  
-      const message_id = Number(msgResult.insertId); // 🔧 BigInt olabilir, sayıya çevirdik
-  
-      await conn.query(
-        "INSERT INTO responses (message_id, response) VALUES (?, ?)",
-        [message_id, fullResponse]
-      );
-  
+      // const msgResult = await conn.query(
+      //   "INSERT INTO messages (user_id, message, sentiment) VALUES (?, ?, ?)",
+      //   [user_id || null, message, sentiment]
+      // );
+      const [message_id] =  await knex('messages').insert({ user_id, message, sentiment });
+
+      // await conn.query(
+      //   "INSERT INTO responses (message_id, response) VALUES (?, ?)",
+      //   [message_id, fullResponse]
+      // );
+      const [response_id] = await knex('responses').insert({ message_id, response: fullResponse });
+      console.log("3", message_id);
+
       res.status(201).json({
         sentiment,
         message_id,
@@ -63,13 +64,11 @@ export const analyze = async (req:any, res:any) => {
       });
   
     } catch (error:any) {
-      console.error("📛 HATA DETAYI:", JSON.stringify(error)); // 🔧 Değiştirildi
+      console.error("📛 HATA DETAYI:", JSON.stringify(error,null,4)); // 🔧 Değiştirildi
       res.status(500).json({
         error: 'Gemini API veya veritabanı hatası.',
         detay: error?.message || error?.sqlMessage || JSON.stringify(error) // 🔧 Değiştirildi
       });
-    } finally {
-      if (conn) conn.release();
-    }
+    } 
 }
   
