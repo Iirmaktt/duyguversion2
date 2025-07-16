@@ -81,7 +81,7 @@ export default App;
 
 
 
-
+/*
 
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -172,6 +172,60 @@ function App() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default App;
+
+
+*/
+
+
+
+
+/*
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ChatPage from './ChatPage';
+import HistoryPage from './HistoryPage';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<ChatPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+*/
+
+
+
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import Dashboard from './Dashboard';
+import Login from './Login';
+import SignUp from './SignUp';
+import ChatPage from './ChatPage';
+import HistoryPage from './HistoryPage';
+import "./index.css";
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
