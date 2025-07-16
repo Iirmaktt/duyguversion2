@@ -14,7 +14,7 @@ import cors from 'cors';
   app.use(express.urlencoded({ extended: true }));
 
   app.use(loggerMiddleware);
-  app.use(appRouter);
+ // app.use(appRouter);
   app.use(errorMiddleware);
   app.use(cors());
 
